@@ -21,5 +21,96 @@ var connection = mysql.createConnection({
   });
 
   function startQuestions() {
-      console.log ("starting question")
+    inquirer
+    .prompt({
+      name: "action",
+      type: "list",
+      message: "What would you like to do?",
+      choices: [
+        "View All Employees",
+        "View All Employees by Department",
+        "View All Employees by Role",
+        "Create Department",
+        "Create Role",
+        "Add Employee",
+        "Delete Employee",
+        "Update Employee Role",
+        "Update Employee Manager",
+      ],
+    })
+    .then(function (answer) {
+      switch (answer.action) {
+        case "View All Employees":
+          viewAll();
+          break;
+
+        case "View All Employees by Department":
+          viewByDept();
+          break;
+
+        case "View All Employees by Role":
+          viewByRole();
+          break;
+
+        case "Create Department":
+          createDept();
+          break;
+
+        case "Create Role":
+          createRole();
+          break;
+
+        case "Add Employee":
+          addEmployee();
+          break;
+
+        case "Delete Employee":
+          delEmployee();
+          break;
+
+        case "Update Employee Role":
+          updateRole();
+          break;
+        
+        case "Update Employee Manager":
+          updateManager();
+          break;
+      }
+    });
   };
+
+function viewAll() {
+    console.log ("this works")
+}
+
+function viewByDept() {
+    console.log ("this works")
+}
+
+function viewByRole() {
+    console.log ("this works")
+}
+
+function createDept() {
+    console.log ("this works")
+}
+
+function createRole() {
+    console.log ("this works")
+}
+
+function addEmployee() {
+    console.log ("this works")
+}
+
+function delEmployee() {
+    console.log ("this works")
+}
+
+function updateRole() {
+    console.log ("this works")
+}
+
+function updateManager() {
+    console.log ("this works")
+}
