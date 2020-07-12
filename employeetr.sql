@@ -26,3 +26,5 @@ CREATE TABLE employee (
 --   manager_id INT FOREIGN KEY REFERENCES manager(id),
   PRIMARY KEY (id)
 );
+
+

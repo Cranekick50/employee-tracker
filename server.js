@@ -80,12 +80,38 @@ var connection = mysql.createConnection({
   };
 
 function viewAll() {
-    console.log ("this works")
-}
+  connection.query(
+    "SELECT * FROM employee_db", function(err,res) {
+      if (err) throw err;
+    console.log(res);
+    connection.end();
+    }
+  )
+  startQuestions();
+};
 
 function viewByDept() {
-    console.log ("this works")
-}
+  inquirer
+    .prompt({
+      name: "department",
+      type: "choice",
+      message: "What department?",
+      choice: []
+    })
+    .then(function (answer) {
+      console.log(answer.department);
+      connection.query(
+        "SELECT * FROM employee_db WHERE ?",
+        { department: answer.department },
+        function (err, res) {
+          if (err) throw err;
+          console.log(
+            // table columns
+          );
+          startQuestions();
+        }
+      );
+    });
 
 function viewByRole() {
     console.log ("this works")
