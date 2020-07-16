@@ -91,6 +91,7 @@ function viewAll() {
   });
 }
 
+//to create multiple choice, you need to run SELECT command first to get a query for the answers.
 function viewByDept() {
   inquirer
     .prompt({
