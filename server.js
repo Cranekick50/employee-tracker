@@ -93,11 +93,21 @@ function viewAll() {
 
 //to create multiple choice, you need to run SELECT command first to get a query for the answers.
 function viewByDept() {
+  connection.query(`SELECT * FROM employee_db.department`, function (err, res) {
+    if(err) throw err;
+  console.table(res);
   inquirer
     .prompt({
       name: "department",
-      type: "input",
+      type: "list",
       message: "Which department?",
+      choices: function () {
+        var choiceArray = [];
+        for (var i = 0; i < res.length; i++) {
+          choiceArray.push(res[i].name);
+        }
+        return choiceArray;
+      },
     })
     .then(function (answer) {
       connection.query(
@@ -114,14 +124,26 @@ function viewByDept() {
       startQuestions();
     });
 }
+  )};
 
 function viewByRole() {
+  connection.query(`SELECT role.title FROM employee_db.role`, function (err, res) {
+    if(err) throw err;
+  console.table(res);
   inquirer
     .prompt({
       name: "role",
-      type: "input",
+      type: "list",
       message: "Which role?",
+      choices: function () {
+        var choiceArray = [];
+        for (var i = 0; i < res.length; i++) {
+          choiceArray.push(res[i].title);
+        }
+        return choiceArray;
+      },
     })
+    
     .then(function (answer) {
       connection.query(
         `SELECT employee.first_name, employee.last_name, role.salary, role.title, department.name as "department name"
@@ -136,7 +158,8 @@ function viewByRole() {
       );
       startQuestions();
     });
-}
+})
+};
 
 function createDept() {
   inquirer.prompt ({
@@ -153,20 +176,67 @@ function createDept() {
 }
 
 function createRole() {
-  inquirer.prompt ({
-    name: "addRole",
-    type: "input",
-    message: "What is the name of the department?",
-  })
-  .then(function (answer) {
-    connection.query(
-      "INSERT INTO role SET ?", {name: answer.addRole}
-    )
-    startQuestions();
-  })
+  connection.query(
+    "SELECT department.name, department.id FROM employee_db.department",
+    function (err, res) {
+      if (err) throw err;
+      inquirer
+        .prompt([
+          {
+            name: "choice",
+            type: "list",
+            choices: function () {
+              var choiceArray = [];
+              var choiceArrayID = [];
+              for (var i = 0; i < res.length; i++) {
+                choiceArray.push(res[i].name);
+                choiceArrayID.push(res[i].id);
+              }
+              return choiceArray;
+            },
+            message: "Which Department?",
+          },
+          {
+            name: "title",
+            type: "input",
+            message: "What is the role name?",
+          },
+          {
+            name: "salary",
+            type: "input",
+            message: "What is the salary?",
+          },
+        ])
+        .then(function (answer) {
+          var department_id = answer.choice;
+          for (var i = 0; i < res.length; i++) {
+            if (res[i].name === answer.choice) {
+              department_id = res[i].id;
+              console.log(department_id);
+            }
+          }
+          connection.query(
+            "INSERT INTO role SET ?",
+            {
+              title: answer.title,
+              salary: answer.salary,
+              department_id: department_id,
+            },
+            function (err) {
+              if (err) throw err;
+              startQuestions();
+            }
+          );
+        });
+    }
+  );
 }
 //investigate why department name is being added to added employees
 function addEmployee() {
+  connection.query(
+    "SELECT role.title, role.id FROM employee_db.role",
+    function (err, res) {
+      if (err) throw err;
   inquirer.prompt ([{
     name: "addFirst",
     type: "input",
@@ -175,58 +245,87 @@ function addEmployee() {
   {
     name: "addLast",
     type: "input",
-    message: "What is the first name of the employee?",
+    message: "What is the last name of the employee?",
   },
   {
     name: "addRole",
-    type: "number",
-    message: "What is the role ID (must be a number)?",
-  },
-  {
-    name: "addManager",
-    type: "number",
-    message: "What is the manager ID (must be a number)?",
-  }
+    type: "list",
+    message: "What is the role?",
+    choices: function () {
+      var choiceArray = [];
+      for (var i = 0; i < res.length; i++) {
+        choiceArray.push(res[i].title);
+      }
+      return choiceArray;
+      }
+},
+  // {
+  //   name: "addManager",
+  //   type: "number",
+  //   message: "What is the manager ID (must be a number)?",
+  // }
 ])
   .then(function (answer) {
+    console.log (answer);
+    console.log (answer.addRole);
+    var role_id = answer.addRole;
+            for (var i = 0; i < res.length; i++) {
+              if (res[i].title === answer.addRole) {
+                role_id = res[i].id;
+                console.log(role_id);
+              }
+            }
     connection.query(
-      "INSERT INTO employee SET ?", {first_name: answer.addFirst, last_name: answer.addLast, role_id: answer.addRole, manager_id: answer.addManager}
+      "INSERT INTO employee SET ?", {first_name: answer.addFirst, last_name: answer.addLast, role_id: role_id, manager_id: answer.addManager},
+      function (err){
+        if(err) throw err;
+      }
     )
     startQuestions();
   })
 }
+  )};
 
 function delEmployee() {
   connection.query(`SELECT * FROM employee_db.employee`, function (err, results) {
-    if(err) throw err;
-  console.table(results);
-  inquirer.prompt ({
-    name: "employee_delete",
-    type: "list",
-    message: "Who do you want to remove?",
-    choices: function () {
-      var choiceArray = [];
-      for (var i = 0; i < results.length; i++) {
-        choiceArray.push(results[i].first_name + " " + results[i].last_name);
-      }
-      return choiceArray;
-    },
-    
-    })
-  }).then(function (answer){
-    var chosenEmployee;
-    console.log(chosenEmployee)
-    for (var i = 0; i < results.length; i++) {
-      if (results[i].id === answer.choice) {
-        chosenEmployee = results[i].id;
-    //     connection.query(`DELETE FROM employee_db.employee WHERE ?`,
-    //     {
-    //       employee.id: chosenEmployee
-    //     }
-      }
-    }
-  })
+    if (err) throw err;
+    console.table(results);
+    inquirer
+      .prompt({
+        name: "employee_delete",
+        type: "list",
+        message: "Who do you want to remove?",
+        choices: function () {
+          var choiceArray = [];
+          for (var i = 0; i < results.length; i++) {
+            choiceArray.push({
+              name: `${results[i].first_name} ${results[i].last_name}`,
+              value: results[i],
+            });
+          }
+          return choiceArray;
+        },
+
+      })
+      .then((answer) => {
+        console.log(answer);
+        connection.query(`DELETE FROM employee_db.employee WHERE ?`,
+        {
+          id: answer.id
+        },
+        function(err, res) {
+          if (err) throw err;
+          console.log("Employee deleted.");
+        
+          startQuestions();
+          
+        }
+      );
+  });
+});
 }
+
+
 
 
 //try to update the below to not be number related
