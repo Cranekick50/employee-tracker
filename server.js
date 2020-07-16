@@ -197,8 +197,37 @@ function addEmployee() {
 }
 
 function delEmployee() {
-  console.log("this works");
+  connection.query(`SELECT * FROM employee_db.employee`, function (err, results) {
+    if(err) throw err;
+  console.table(results);
+  inquirer.prompt ({
+    name: "employee_delete",
+    type: "list",
+    message: "Who do you want to remove?",
+    choices: function () {
+      var choiceArray = [];
+      for (var i = 0; i < results.length; i++) {
+        choiceArray.push(results[i].first_name + " " + results[i].last_name);
+      }
+      return choiceArray;
+    },
+    
+    })
+  }).then(function (answer){
+    var chosenEmployee;
+    console.log(chosenEmployee)
+    for (var i = 0; i < results.length; i++) {
+      if (results[i].id === answer.choice) {
+        chosenEmployee = results[i].id;
+    //     connection.query(`DELETE FROM employee_db.employee WHERE ?`,
+    //     {
+    //       employee.id: chosenEmployee
+    //     }
+      }
+    }
+  })
 }
+
 
 //try to update the below to not be number related
 function updateRole() {
