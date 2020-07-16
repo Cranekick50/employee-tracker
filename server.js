@@ -237,7 +237,7 @@ function createRole() {
     }
   );
 }
-//investigate why department name is being added to added employees
+
 function addEmployee() {
   connection.query(
     "SELECT role.title, role.id FROM employee_db.role",
@@ -341,85 +341,6 @@ function delEmployee() {
       });
   });
 }
-
-// function updateRole() {
-//   connection.query(
-//     `SELECT employee.first_name, employee.last_name, role.salary, role.title, department.name as "department name"
-//   FROM employee_db.employee
-//   INNER JOIN role ON employee.role_id = role.id
-//   INNER JOIN department ON role.department_id = department.id`,
-//     function (err, results) {
-//       if (err) throw err;
-//       console.table(results);
-//       connection
-//         .query(`SELECT role.title FROM employee_db.role`, function (err, results) {
-//           if (err) throw err;
-//           console.table(results)
-//           inquirer.prompt([
-//             {
-//               name: "employee_id",
-//               type: "list",
-//               message: "Who do you want to update?",
-//               choices: function () {
-//                 var choiceArray1 = [];
-//                 for (var i = 0; i < results.length; i++) {
-//                   choiceArray1.push(results[i].title);
-//                 }
-              
-//                 return choiceArray1;
-//               }
-//               },
-//             {
-//               name: "role_id",
-//               type: "list",
-//               message: "What is the new role?",
-//               choices: function () {
-//                 var choiceArray2 = [];
-//                 for (var i = 0; i < results.length; i++) {
-//                   choiceArray2.push({
-//                     name: results[i].role.id,
-//                     value: results[i],
-//                   });
-//                 }
-//                 return choiceArray2;
-//               },
-//             },
-//           ]);
-//         })
-//         .then((answer) => {
-//           console.log(answer);
-//           // connection.query(
-//           //     "UPDATE employee SET role_id= ? WHERE id= ?", [answer.role_id, answer.employee_id]
-//           //   )
-//         });
-//     }
-//   );
-
-  // startQuestions();
-// }
-
-// function updateManager() {
-//   inquirer
-//     .prompt([
-//       {
-//         name: "employee_id",
-//         type: "input",
-//         message: "Who do you want to update?",
-//       },
-//       {
-//         name: "manager_id",
-//         type: "number",
-//         message: "What is the new role ID (must be a number)?",
-//       },
-//     ])
-//     .then(function (answer) {
-//       connection.query("UPDATE employee SET role_id= ? WHERE id= ?", [
-//         answer.manager_id,
-//         answer.employee_id,
-//       ]);
-//     });
-//   startQuestions();
-// }
 
 function updateRole() {
   connection.query(
