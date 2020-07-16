@@ -237,6 +237,7 @@ function addEmployee() {
     "SELECT role.title, role.id FROM employee_db.role",
     function (err, res) {
       if (err) throw err;
+    console.table(res)
   inquirer.prompt ([{
     name: "addFirst",
     type: "input",
@@ -259,11 +260,11 @@ function addEmployee() {
       return choiceArray;
       }
 },
-  // {
-  //   name: "addManager",
-  //   type: "number",
-  //   message: "What is the manager ID (must be a number)?",
-  // }
+{
+    name: "addManager",
+    type: "number",
+    message: "What is the manager ID (must be a number)?",
+  }
 ])
   .then(function (answer) {
     console.log (answer);
@@ -275,15 +276,24 @@ function addEmployee() {
                 console.log(role_id);
               }
             }
-    connection.query(
-      "INSERT INTO employee SET ?", {first_name: answer.addFirst, last_name: answer.addLast, role_id: role_id, manager_id: answer.addManager},
+       
+              connection.query(
+              
+      "INSERT INTO employee SET ?", {
+        first_name: answer.addFirst, 
+        last_name: answer.addLast, 
+        role_id: role_id, 
+        manager_id: answer.addManager,
+      },
+              
+              
       function (err){
         if(err) throw err;
       }
     )
     startQuestions();
-  })
 }
+  )}
   )};
 
 function delEmployee() {
@@ -309,9 +319,9 @@ function delEmployee() {
       })
       .then((answer) => {
         console.log(answer);
-        connection.query(`DELETE FROM employee_db.employee WHERE ?`,
+        connection.query(`DELETE FROM employee WHERE ?`,
         {
-          id: answer.id
+          id: answer.employee_delete.id
         },
         function(err, res) {
           if (err) throw err;
