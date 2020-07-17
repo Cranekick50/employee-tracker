@@ -35,7 +35,6 @@ function startQuestions() {
         "Add Employee",
         "Delete Employee",
         "Update Employee Role",
-        "Update Employee Manager",
       ],
     })
     .then(function (answer) {
@@ -72,9 +71,6 @@ function startQuestions() {
           updateRole();
           break;
 
-        // case "Update Employee Manager":
-        //   updateManager();
-        //   break;
       }
     });
 }
@@ -177,6 +173,10 @@ function createDept() {
       connection.query("INSERT INTO department SET ?", {
         name: answer.addDept,
       });
+      connection.query(`SELECT * FROM employee_db.department`, function (err, res) {
+        if (err) throw err
+        console.table(res);
+      });
       startQuestions();
     });
 }
@@ -230,6 +230,11 @@ function createRole() {
             },
             function (err) {
               if (err) throw err;
+
+              connection.query(`SELECT * FROM employee_db.role`, function (err, res) {
+                if (err) throw err
+                console.table(res);
+              });
               startQuestions();
             }
           );
@@ -298,6 +303,10 @@ function addEmployee() {
               if (err) throw err;
             }
           );
+          connection.query(`SELECT * FROM employee_db.employee`, function (err, res) {
+            if (err) throw err
+            console.table(res);
+          });
           startQuestions();
         });
     }
